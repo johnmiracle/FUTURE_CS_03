@@ -7,7 +7,7 @@ import crypto from "crypto";
 import Busboy from "busboy";
 import { v4 as uuidv4 } from "uuid";
 
-const __filename = fileURLToPath(import.meta.url);  
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const PORT = process.env.PORT || 3000;
@@ -147,10 +147,14 @@ async function handleUpload(req, res) {
                     created_at: new Date().toISOString(),
                     iv,
                     tag,
-                    path: encPath
+                    path: encPath,
                 });
                 await saveIndex(rows);
-                sendJSON(res, 201, { id, name: meta.originalName, size }, res._corsHeaders);
+                res.writeHead(302, {
+                    'Location': '/',
+                    ...res._corsHeaders
+                });
+                res.end();
             })
             .catch((err) => {
                 console.error(err);
